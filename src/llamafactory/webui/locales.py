@@ -1148,6 +1148,20 @@ LOCALES = {
             "info": "多卡训练的 DeepSpeed stage。",
         },
     },
+    "ds_backend": {
+        "en": {
+            "label": "Distributed Backends",
+            "info": "Backend for distributed training backend ('gloo' for winodws).",
+        },
+        "ru": {
+            "label": "Распределенные бэкэнды",
+            "info": "Серверная часть для распределенного обучения ('gloo' для Windows).",
+        },
+        "zh": {
+            "label": "Distributed Backends",
+            "info": "多卡训练的 torch.distributed backend('gloo' for winodws)。",
+        },
+    },
     "ds_offload": {
         "en": {
             "label": "Enable offload",

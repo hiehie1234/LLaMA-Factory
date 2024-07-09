@@ -226,6 +226,7 @@ class Runner:
             ds_stage = get("train.ds_stage")
             ds_offload = "offload_" if get("train.ds_offload") else ""
             args["deepspeed"] = os.path.join(DEFAULT_CACHE_DIR, "ds_z{}_{}config.json".format(ds_stage, ds_offload))
+            args["ddp_backend"] = None if get("train.ds_backend") == "none" else get("train.ds_backend")
 
         return args
 

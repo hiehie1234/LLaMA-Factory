@@ -1,0 +1,66 @@
+diff --git a/src/llamafactory/webui/components/train.py b/src/llamafactory/webui/components/train.py
+index 874f3c5..0c8b324 100644
+--- a/src/llamafactory/webui/components/train.py
++++ b/src/llamafactory/webui/components/train.py
+@@ -279,6 +279,7 @@ def create_train_tab(engine: "Engine") -> Dict[str, "Component"]:
+             with gr.Row():
+                 device_count = gr.Textbox(value=str(get_device_count() or 1), interactive=False)
+                 ds_stage = gr.Dropdown(choices=["none", "2", "3"], value="none")
++                ds_backend = gr.Dropdown(choices=["none", "nccl", "mpi", "gloo"], value="none")
+                 ds_offload = gr.Checkbox()
+ 
+             with gr.Row():
+@@ -291,7 +292,7 @@ def create_train_tab(engine: "Engine") -> Dict[str, "Component"]:
+         with gr.Column(scale=1):
+             loss_viewer = gr.Plot()
+ 
+-    input_elems.update({output_dir, config_path, device_count, ds_stage, ds_offload})
++    input_elems.update({output_dir, config_path, device_count, ds_stage, ds_offload, ds_backend})
+     elem_dict.update(
+         dict(
+             cmd_preview_btn=cmd_preview_btn,
+@@ -309,6 +310,7 @@ def create_train_tab(engine: "Engine") -> Dict[str, "Component"]:
+             progress_bar=progress_bar,
+             output_box=output_box,
+             loss_viewer=loss_viewer,
++            ds_backend=ds_backend,
+         )
+     )
+     output_elems = [output_box, progress_bar, loss_viewer]
+diff --git a/src/llamafactory/webui/locales.py b/src/llamafactory/webui/locales.py
+index 8e8d6fc..db98a30 100644
+--- a/src/llamafactory/webui/locales.py
++++ b/src/llamafactory/webui/locales.py
+@@ -1148,6 +1148,20 @@ LOCALES = {
+             "info": "多卡训练的 DeepSpeed stage。",
+         },
+     },
++    "ds_backend": {
++        "en": {
++            "label": "Distributed Backends",
++            "info": "Backend for distributed training backend ('gloo' for winodws).",
++        },
++        "ru": {
++            "label": "Распределенные бэкэнды",
++            "info": "Серверная часть для распределенного обучения ('gloo' для Windows).",
++        },
++        "zh": {
++            "label": "Distributed Backends",
++            "info": "多卡训练的 torch.distributed backend('gloo' for winodws)。",
++        },
++    },
+     "ds_offload": {
+         "en": {
+             "label": "Enable offload",
+diff --git a/src/llamafactory/webui/runner.py b/src/llamafactory/webui/runner.py
+index 13dbba0..b89a191 100644
+--- a/src/llamafactory/webui/runner.py
++++ b/src/llamafactory/webui/runner.py
+@@ -226,6 +226,7 @@ class Runner:
+             ds_stage = get("train.ds_stage")
+             ds_offload = "offload_" if get("train.ds_offload") else ""
+             args["deepspeed"] = os.path.join(DEFAULT_CACHE_DIR, "ds_z{}_{}config.json".format(ds_stage, ds_offload))
++            args["ddp_backend"] = None if get("train.ds_backend") == "none" else get("train.ds_backend")
+ 
+         return args
+ 

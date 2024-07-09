@@ -279,6 +279,7 @@ def create_train_tab(engine: "Engine") -> Dict[str, "Component"]:
             with gr.Row():
                 device_count = gr.Textbox(value=str(get_device_count() or 1), interactive=False)
                 ds_stage = gr.Dropdown(choices=["none", "2", "3"], value="none")
+                ds_backend = gr.Dropdown(choices=["none", "nccl", "mpi", "gloo"], value="none")
                 ds_offload = gr.Checkbox()
 
             with gr.Row():
@@ -291,7 +292,7 @@ def create_train_tab(engine: "Engine") -> Dict[str, "Component"]:
         with gr.Column(scale=1):
             loss_viewer = gr.Plot()
 
-    input_elems.update({output_dir, config_path, device_count, ds_stage, ds_offload})
+    input_elems.update({output_dir, config_path, device_count, ds_stage, ds_offload, ds_backend})
     elem_dict.update(
         dict(
             cmd_preview_btn=cmd_preview_btn,
@@ -309,6 +310,7 @@ def create_train_tab(engine: "Engine") -> Dict[str, "Component"]:
             progress_bar=progress_bar,
             output_box=output_box,
             loss_viewer=loss_viewer,
+            ds_backend=ds_backend,
         )
     )
     output_elems = [output_box, progress_bar, loss_viewer]
