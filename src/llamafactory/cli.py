@@ -88,7 +88,7 @@ def main():
     elif command == Command.TRAIN:
         force_torchrun = os.environ.get("FORCE_TORCHRUN", "0").lower() in ["true", "1"]
         if force_torchrun or get_device_count() > 1:
-            master_addr = os.environ.get("MASTER_ADDR", "127.0.0.1")
+            master_addr = os.environ.get("MASTER_ADDR", "localhost")
             master_port = os.environ.get("MASTER_PORT", str(random.randint(20001, 29999)))
             logger.info("Initializing distributed tasks at: {}:{}".format(master_addr, master_port))
             subprocess.run(
